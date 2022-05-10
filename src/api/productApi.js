@@ -25,5 +25,9 @@ const productApi = {
         const url = "/product?name=" + name;
         return axiosClient.get(url);
     },
+    getProductByPrice: (price) => {
+        const url = `/product/price?from=${price.from}&to=${price.to}`;
+        return axiosClient.get(url);
+    },
 };
 export default productApi;

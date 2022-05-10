@@ -33,7 +33,13 @@ const RecoverPasswordScreen = (props) => {
     };
 
     const handleResetPassword = async () => {
-        if (password == rePassword) {
+        if (password === null || typeof (password) === 'undefined' || !password.trim())
+            showNotify("password not null!", "error");
+        else if (rePassword !== password || !rePassword.trim())
+            showNotify("Password not match", "error");
+        else if (code === null || typeof (code) === 'undefined' || code.length != 6)
+            showNotify("Code must have 6 characters!", "error");
+        else if (password == rePassword) {
             const data = {
                 userName,
                 newPassword: password,
@@ -135,6 +141,7 @@ const RecoverPasswordScreen = (props) => {
                             <Input
                                 width="xs"
                                 height="12"
+                                keyboardType='numeric'
                                 placeholder="Reset code"
                                 InputRightElement={
                                     <Icon
@@ -175,8 +182,7 @@ const RecoverPasswordScreen = (props) => {
                         </HStack>
                     </VStack>
                 </View>
-            </View>
-            <View style={styles.shopping_now}>
+                <Text></Text>
                 <Text
                     style={styles.shopping_now_title}
                     onPress={() => props.navigation.navigate("HomeScreen")}
@@ -184,6 +190,7 @@ const RecoverPasswordScreen = (props) => {
                     SHOPPING NOW
                 </Text>
             </View>
+
         </View>
     );
 };

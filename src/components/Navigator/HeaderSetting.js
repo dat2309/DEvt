@@ -53,7 +53,7 @@ const headerSetting = (props) => {
         headerRight: () => (
             <Box>
                 <Popover
-                    onClose={resetTextSearch}
+                    // onClose={resetTextSearch}
                     placement="bottom right"
                     trigger={(triggerProps) => {
                         return (

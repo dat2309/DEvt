@@ -73,6 +73,7 @@ const CartScreen = (props) => {
         const result = await CartUtils.removeFromCart(id);
         if (result) {
             getCartInStorage();
+            showNotify("Delete success", "success");
         }
     };
 

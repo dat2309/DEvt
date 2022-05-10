@@ -31,18 +31,22 @@ const ActiveScreen = (props) => {
     };
 
     const handleSubmitCode = async () => {
-        const data = {
-            userName: userName,
-            activeKey: code,
-        };
-        console.log(data);
-        const res = await userApi.submitCode(data);
-        if (res) {
-            if (res.code === "ACCEPTED") {
-                props.navigation.navigate("HomeScreen");
-                showNotify("Register successfully", "success");
-            } else {
-                showNotify(res.message, "error");
+        if (code === null || typeof (code) === 'undefined' || code.length != 6)
+            showNotify("Code must have 6 characters", "success");
+        else {
+            const data = {
+                userName: userName,
+                activeKey: code,
+            };
+            console.log(data);
+            const res = await userApi.submitCode(data);
+            if (res) {
+                if (res.code === "ACCEPTED") {
+                    props.navigation.navigate("LoginScreen");
+                    showNotify("Register successfully", "success");
+                } else {
+                    showNotify("Code incorrect", "error");
+                }
             }
         }
     };
@@ -70,6 +74,7 @@ const ActiveScreen = (props) => {
                                     width="xs"
                                     height="12"
                                     placeholder="Enter your code..."
+                                    keyboardType='numeric'
                                     onChangeText={(value) => setCode(value)}
                                 />
                             </HStack>

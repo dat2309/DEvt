@@ -29,12 +29,16 @@ const ForgotPasswordScreen = (props) => {
     };
 
     const handleSubmitUsername = async () => {
-        const res = await userApi.getTokenResetPassword(userName);
-        if (res.code == "CREATED") {
-            showNotify("Reset code sent to your email", "success");
-            props.navigation.navigate("RecoverPasswordScreen", { userName });
-        } else {
-            showNotify(res.message, "error");
+        if (userName === null || typeof (userName) === 'undefined' || !userName.trim())
+            showNotify("UserName not null!", "error");
+        else {
+            const res = await userApi.getTokenResetPassword(userName);
+            if (res.code == "CREATED") {
+                showNotify("Reset code sent to your email", "success");
+                props.navigation.navigate("RecoverPasswordScreen", { userName });
+            } else {
+                showNotify(res.message, "error");
+            }
         }
     };
 
@@ -97,8 +101,7 @@ const ForgotPasswordScreen = (props) => {
                         </HStack>
                     </VStack>
                 </View>
-            </View>
-            <View style={styles.shopping_now}>
+                <Text></Text>
                 <Text
                     style={styles.shopping_now_title}
                     onPress={() => props.navigation.navigate("HomeScreen")}
@@ -106,6 +109,7 @@ const ForgotPasswordScreen = (props) => {
                     SHOPPING NOW
                 </Text>
             </View>
+
         </View>
     );
 };

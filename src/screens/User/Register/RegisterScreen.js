@@ -33,14 +33,17 @@ const RegisterScreen = (props) => {
     };
 
     const handleRegister = async () => {
-        if (userName === null)
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+        if (userName === null || !userName.trim())
             showNotify("UserName not null!", "error");
-        else if (email === null)
+        else if (email === null || !email.trim())
             showNotify("Email not null!", "error");
-        else if (password === null)
+        else if (reg.test(email) === false)
+            showNotify("Email invalidate!", "error");
+        else if (password === null || !password.trim())
             showNotify("Password not null!", "error");
 
-        else if (rePassword !== password) {
+        else if (rePassword !== password || !rePassword.trim()) {
             showNotify("Password not match!", "error");
         } else {
             const user = {
@@ -203,8 +206,7 @@ const RegisterScreen = (props) => {
                         </HStack>
                     </VStack>
                 </View>
-            </View>
-            <View style={styles.shopping_now}>
+                <Text></Text>
                 <Text
                     style={styles.shopping_now_title}
                     onPress={() => props.navigation.navigate("HomeScreen")}
@@ -212,6 +214,7 @@ const RegisterScreen = (props) => {
                     SHOPPING NOW
                 </Text>
             </View>
+
         </View>
     );
 };

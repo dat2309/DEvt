@@ -31,21 +31,27 @@ const LoginScreen = (props) => {
     };
 
     const handleLogin = async () => {
-        const req = {
-            userName: userName,
-            password: password,
-        };
-        const res = await userApi.postUserLogin(req);
-        if (res) {
-            if (res.message === undefined) {
-                await AsyncStorage.setItem("user", JSON.stringify(res));
-                console.log(res);
-                props.handleUserIsLogin(true);
-                const profile = await userApi.getUserProfile(res.id);
-                await AsyncStorage.setItem("profile", JSON.stringify(profile));
-                showNotify("Login success", "success");
-            } else {
-                showNotify(res.message, "error");
+        if (userName === null || typeof (userName) === 'undefined' || !userName.trim())
+            showNotify("UserName not null!", "error");
+        else if (password === null || typeof (password) === 'undefined' || !password.trim())
+            showNotify("Password not null!", "error");
+        else {
+            const req = {
+                userName: userName,
+                password: password,
+            };
+            const res = await userApi.postUserLogin(req);
+            if (res) {
+                if (res.message === undefined) {
+                    await AsyncStorage.setItem("user", JSON.stringify(res));
+                    console.log(res);
+                    props.handleUserIsLogin(true);
+                    const profile = await userApi.getUserProfile(res.id);
+                    await AsyncStorage.setItem("profile", JSON.stringify(profile));
+                    showNotify("Login success", "success");
+                } else {
+                    showNotify(res.message, "error");
+                }
             }
         }
     };
@@ -142,7 +148,7 @@ const LoginScreen = (props) => {
                             <VStack>
                                 <Text
                                     style={{
-                                        fontWeight: "600",
+                                        fontWeight: "800",
                                     }}
                                     onPress={() =>
                                         props.navigation.navigate(
@@ -156,8 +162,7 @@ const LoginScreen = (props) => {
                         </HStack>
                     </VStack>
                 </View>
-            </View>
-            <View style={styles.shopping_now}>
+                <Text></Text>
                 <Text
                     style={styles.shopping_now_title}
                     onPress={() => props.navigation.navigate("HomeScreen")}
@@ -165,6 +170,7 @@ const LoginScreen = (props) => {
                     SHOPPING NOW
                 </Text>
             </View>
+
         </View>
     );
 };

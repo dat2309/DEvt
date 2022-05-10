@@ -63,7 +63,6 @@ const ProductListScreen = (props) => {
     const [totalPage, setTotalPage] = useState();
     const [activePage, setActivePage] = useState();
 
-
     const getAllCategory = async () => {
         const res = await categoryApi.getAllCategory();
         if (res) {
@@ -106,10 +105,8 @@ const ProductListScreen = (props) => {
 
     const searchProductByName = async () => {
         try {
-            console.log("ahih" + props.route.params.textSearch)
             const { textSearch } = props.route.params;
-            console.log("hád" + textSearch)
-
+            console.debug("Search by product name is: " + textSearch);
             const res = await productApi.searchProductByName(textSearch);
             if (res) {
                 setProducts(res.content);
@@ -118,16 +115,13 @@ const ProductListScreen = (props) => {
                 setActivePage(res.number + 1);
             }
         } catch (error) {
+            console.log(error);
             getAllProduct();
         }
     };
 
     useEffect(() => {
         getAllCategory();
-        if (typeof (props.route.params) === 'undefined')
-            console.log(props.route.params)
-        else
-            console.log(props.route.params)
         searchProductByName();
     }, [categories == null, products == null, props.route.params]);
 

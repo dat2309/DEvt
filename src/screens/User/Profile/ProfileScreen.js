@@ -31,7 +31,7 @@ const ProfileScreen = (props) => {
     const [district, setDistrict] = useState();
 
     const toast = useToast();
-
+    const [show, setShow] = useState(false)
     const showNotify = (title, status) => {
         toast.show({
             title: title,
@@ -408,45 +408,50 @@ const ProfileScreen = (props) => {
                             />
                         </VStack>
                     </HStack>
+                    <Text></Text>
+                    <ButtonNativeBase onPress={() => setShow(true)}>Update</ButtonNativeBase>
                 </View>
             )}
 
-            <View style={styles.confirm_template}>
-                <HStack justifyContent="space-evenly">
-                    <VStack justifyContent="center">
-                        <ButtonNativeBase
-                            style={styles.button_back}
-                            leftIcon={
-                                <Icon
-                                    as={Ionicons}
-                                    name="close-outline"
-                                    color="white"
-                                    size={5}
-                                />
-                            }
-                            onPress={handleCancel}
-                        >
-                            <Text style={styles.button_text}>CANCEL</Text>
-                        </ButtonNativeBase>
-                    </VStack>
-                    <VStack justifyContent="center">
-                        <ButtonNativeBase
-                            onPress={handleSubmit}
-                            style={styles.button_confirm}
-                            leftIcon={
-                                <Icon
-                                    as={Ionicons}
-                                    name="checkmark-outline"
-                                    color="white"
-                                    size={5}
-                                />
-                            }
-                        >
-                            <Text style={styles.button_text}>SUBMIT</Text>
-                        </ButtonNativeBase>
-                    </VStack>
-                </HStack>
-            </View>
+            {show ?
+                <View style={styles.confirm_template}>
+                    <HStack justifyContent="space-evenly">
+                        <VStack justifyContent="center">
+                            <ButtonNativeBase
+                                style={styles.button_back}
+                                leftIcon={
+                                    <Icon
+                                        as={Ionicons}
+                                        name="close-outline"
+                                        color="white"
+                                        size={5}
+                                    />
+                                }
+                                onPress={handleCancel}
+                            >
+                                <Text style={styles.button_text}>CANCEL</Text>
+                            </ButtonNativeBase>
+                        </VStack>
+                        <VStack justifyContent="center">
+                            <ButtonNativeBase
+                                onPress={handleSubmit}
+
+                                style={styles.button_confirm}
+                                leftIcon={
+                                    <Icon
+                                        as={Ionicons}
+                                        name="checkmark-outline"
+                                        color="white"
+                                        size={5}
+                                    />
+                                }
+                            >
+                                <Text style={styles.button_text}>SUBMIT</Text>
+                            </ButtonNativeBase>
+                        </VStack>
+                    </HStack>
+                </View>
+                : null}
         </View>
     );
 };

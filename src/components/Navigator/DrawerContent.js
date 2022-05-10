@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { Button } from "native-base";
+import { Button, useToast, } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     DrawerContentScrollView,
@@ -9,9 +9,18 @@ import {
 } from "@react-navigation/drawer";
 
 const DrawerContent = (props) => {
+    const toast = useToast();
+    const showNotify = (title, status) => {
+        toast.show({
+            title: title,
+            status: status,
+            placement: "top",
+        });
+    };
     const handleClickLogout = async () => {
         await AsyncStorage.removeItem("user");
         await AsyncStorage.removeItem("profile");
+        showNotify("Logout successfully", "success");
         props.setLoginVisible(false);
         props.navigation.navigate("HomeScreen");
     };
