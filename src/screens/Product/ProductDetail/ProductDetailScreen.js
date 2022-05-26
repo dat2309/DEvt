@@ -9,7 +9,7 @@ import {
     useToast,
     VStack,
 } from "native-base";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
     Image,
     ScrollView,
@@ -17,9 +17,8 @@ import {
     TouchableWithoutFeedback,
     View,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import NumberFormat from "react-number-format";
 import CartUtils from "../../../utils/cartUtils";
-
 import styles from "./ProductDetailStyle";
 
 const ProductDetailScreen = (props) => {
@@ -61,7 +60,7 @@ const ProductDetailScreen = (props) => {
             quantity,
             image: product.image,
             name: product.name,
-            price: (Number(product.price) * quantity).toFixed(2),
+            price: Number(product.price) * quantity,
             maxQuantity,
         };
         const result = CartUtils.addToCart(item);
@@ -124,7 +123,11 @@ const ProductDetailScreen = (props) => {
                     as={Ionicons}
                     name="arrow-back-outline"
                     size={7}
-                    onPress={() => props.navigation.navigate("ProductListScreen")}
+                    onPress={() =>
+                        props.navigation.navigate("Product", {
+                            screen: "ProductListScreen",
+                        })
+                    }
                 />
                 <ScrollView>
                     <View
@@ -285,9 +288,19 @@ const ProductDetailScreen = (props) => {
                                         </Text>
                                     </VStack>
                                     <VStack>
-                                        <Text style={styles.product_price}>
-                                            ${product.price}
-                                        </Text>
+                                        <NumberFormat
+                                            value={product.price}
+                                            displayType={"text"}
+                                            thousandSeparator={true}
+                                            suffix={" VND"}
+                                            renderText={(formattedValue) => (
+                                                <Text
+                                                    style={styles.product_price}
+                                                >
+                                                    {formattedValue}
+                                                </Text>
+                                            )}
+                                        />
                                     </VStack>
                                 </HStack>
                             </View>
@@ -307,7 +320,13 @@ const ProductDetailScreen = (props) => {
                                         )
                                     }
                                 >
-                                    <Text>Add to cart</Text>
+                                    <Text
+                                        style={{
+                                            color: "white",
+                                        }}
+                                    >
+                                        Add to cart
+                                    </Text>
                                 </ButtonNativeBase>
                             </View>
                         </View>

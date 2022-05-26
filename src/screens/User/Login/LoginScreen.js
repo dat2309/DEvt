@@ -6,6 +6,7 @@ import {
     HStack,
     Icon,
     Input,
+    Spinner,
     useToast,
     VStack,
 } from "native-base";
@@ -13,12 +14,14 @@ import React, { useState } from "react";
 import { Text, View } from "react-native";
 import userApi from "../../../api/userApi";
 import { COLORS } from "../../../constant/index";
+import validate from "../../../utils/validate";
 import styles from "./LoginStyle";
 
 const LoginScreen = (props) => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [userName, setUserName] = useState();
     const [password, setPassword] = useState();
+    const [submit, isSubmit] = useState(false);
 
     const toast = useToast();
 
@@ -31,28 +34,44 @@ const LoginScreen = (props) => {
     };
 
     const handleLogin = async () => {
-        if (userName === null || typeof (userName) === 'undefined' || !userName.trim())
-            showNotify("UserName not null!", "error");
-        else if (password === null || typeof (password) === 'undefined' || !password.trim())
-            showNotify("Password not null!", "error");
-        else {
+        if (userName && password) {
+            isSubmit(true);
             const req = {
                 userName: userName,
                 password: password,
             };
+
+            const validateUsername = validate.usernameValidate(req.userName);
+            if (validateUsername !== true) {
+                showNotify(validateUsername, "error");
+                return true;
+            }
+
+            const validatePassword = validate.passwordValidate(req.password);
+            if (validatePassword !== true) {
+                showNotify(validatePassword, "error");
+                return true;
+            }
+
             const res = await userApi.postUserLogin(req);
             if (res) {
                 if (res.message === undefined) {
                     await AsyncStorage.setItem("user", JSON.stringify(res));
-                    console.log(res);
+                    isSubmit(false);
                     props.handleUserIsLogin(true);
                     const profile = await userApi.getUserProfile(res.id);
-                    await AsyncStorage.setItem("profile", JSON.stringify(profile));
+                    await AsyncStorage.setItem(
+                        "profile",
+                        JSON.stringify(profile)
+                    );
                     showNotify("Login success", "success");
                 } else {
+                    isSubmit(false);
                     showNotify(res.message, "error");
                 }
             }
+        } else {
+            showNotify("Please input username and password", "warning");
         }
     };
 
@@ -137,8 +156,15 @@ const LoginScreen = (props) => {
                                 backgroundColor={COLORS.black}
                                 width={200}
                                 onPress={handleLogin}
+                                isDisabled={submit}
                             >
-                                <Text style={styles.login_title}>Login</Text>
+                                {submit ? (
+                                    <Spinner color="white" />
+                                ) : (
+                                    <Text style={styles.login_title}>
+                                        Login
+                                    </Text>
+                                )}
                             </ButtonNativeBase>
                         </HStack>
                         <HStack mt={2} justifyContent="center">
@@ -148,7 +174,7 @@ const LoginScreen = (props) => {
                             <VStack>
                                 <Text
                                     style={{
-                                        fontWeight: "800",
+                                        fontWeight: "600",
                                     }}
                                     onPress={() =>
                                         props.navigation.navigate(
@@ -162,13 +188,14 @@ const LoginScreen = (props) => {
                         </HStack>
                     </VStack>
                 </View>
-                <Text></Text>
-                <Text
-                    style={styles.shopping_now_title}
-                    onPress={() => props.navigation.navigate("HomeScreen")}
-                >
-                    SHOPPING NOW
-                </Text>
+                <View style={styles.shopping_now}>
+                    <Text
+                        style={styles.shopping_now_title}
+                        onPress={() => props.navigation.navigate("HomeScreen")}
+                    >
+                        SHOPPING NOW
+                    </Text>
+                </View>
             </View>
 
         </View>

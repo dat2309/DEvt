@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { Text, View } from "react-native";
 import userApi from "../../../api/userApi";
 import { COLORS } from "../../../constant/index";
+import validate from "../../../utils/validate";
 import styles from "./RecoverPasswordStyle";
 
 const RecoverPasswordScreen = (props) => {
@@ -33,25 +34,26 @@ const RecoverPasswordScreen = (props) => {
     };
 
     const handleResetPassword = async () => {
-        if (password === null || typeof (password) === 'undefined' || !password.trim())
-            showNotify("password not null!", "error");
-        else if (rePassword !== password || !rePassword.trim())
-            showNotify("Password not match", "error");
-        else if (code === null || typeof (code) === 'undefined' || code.length != 6)
-            showNotify("Code must have 6 characters!", "error");
-        else if (password == rePassword) {
-            const data = {
-                userName,
-                newPassword: password,
-                resetPasswordCode: code,
-            };
-            console.log(data);
-            const res = await userApi.postResetPassword(data);
-            if (res.code == "ACCEPTED") {
-                showNotify("Password changed, please login", "success");
-                props.navigation.navigate("LoginScreen");
-            } else {
-                showNotify(res.message, "error");
+        if (password && rePassword && code) {
+            const validatePassword = validate.passwordValidate(password);
+            if (validatePassword !== true) {
+                showNotify(validatePassword, "error");
+                return true;
+            }
+            if (password == rePassword) {
+                const data = {
+                    userName,
+                    newPassword: password,
+                    resetPasswordCode: code,
+                };
+                console.log(data);
+                const res = await userApi.postResetPassword(data);
+                if (res.code == "ACCEPTED") {
+                    showNotify("Password changed, please login", "success");
+                    props.navigation.navigate("LoginScreen");
+                } else {
+                    showNotify(res.message, "error");
+                }
             }
         }
     };
@@ -141,7 +143,6 @@ const RecoverPasswordScreen = (props) => {
                             <Input
                                 width="xs"
                                 height="12"
-                                keyboardType='numeric'
                                 placeholder="Reset code"
                                 InputRightElement={
                                     <Icon
@@ -182,13 +183,14 @@ const RecoverPasswordScreen = (props) => {
                         </HStack>
                     </VStack>
                 </View>
-                <Text></Text>
-                <Text
-                    style={styles.shopping_now_title}
-                    onPress={() => props.navigation.navigate("HomeScreen")}
-                >
-                    SHOPPING NOW
-                </Text>
+                <View style={styles.shopping_now}>
+                    <Text
+                        style={styles.shopping_now_title}
+                        onPress={() => props.navigation.navigate("HomeScreen")}
+                    >
+                        SHOPPING NOW
+                    </Text>
+                </View>
             </View>
 
         </View>

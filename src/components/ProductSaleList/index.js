@@ -1,6 +1,7 @@
 import { Box, Text as TextNativeBase } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import NumberFormat from "react-number-format";
 import productApi from "../../api/productApi";
 import styles from "./styles";
 
@@ -64,7 +65,17 @@ const renderProduct = (product, index, navigation) => {
                                 w="80%"
                                 style={styles.card_discount}
                             >
-                                Price: {product.price}
+                                <NumberFormat
+                                    value={product.price}
+                                    displayType={"text"}
+                                    thousandSeparator={true}
+                                    suffix={" VND"}
+                                    renderText={(formattedValue) => (
+                                        <Text style={styles.product_price}>
+                                            {formattedValue}
+                                        </Text>
+                                    )}
+                                />
                             </TextNativeBase>
                             <TextNativeBase
                                 isTruncated
@@ -72,11 +83,20 @@ const renderProduct = (product, index, navigation) => {
                                 w="80%"
                                 style={styles.card_price}
                             >
-                                Price:{" "}
-                                {calculatePriceDiscount(
-                                    product.price,
-                                    product.discount
-                                )}
+                                <NumberFormat
+                                    value={calculatePriceDiscount(
+                                        product.price,
+                                        product.discount
+                                    )}
+                                    displayType={"text"}
+                                    thousandSeparator={true}
+                                    suffix={" VND"}
+                                    renderText={(formattedValue) => (
+                                        <Text style={styles.product_price}>
+                                            {formattedValue}
+                                        </Text>
+                                    )}
+                                />
                             </TextNativeBase>
                         </Box>
                     </View>

@@ -1,6 +1,7 @@
 import { Box, Text as TextNativeBase } from "native-base";
 import React, { useState, useEffect } from "react";
 import { FlatList, Image, TouchableOpacity, View, Text } from "react-native";
+import NumberFormat from "react-number-format";
 import categoryApi from "../../api/categoryApi";
 import BannerCarousel from "../BannerCarousel";
 import CategoryCarousel from "../CategoryCarousel";
@@ -46,7 +47,17 @@ const renderProduct = (product, index, navigation) => {
                                 w="80%"
                                 style={styles.card_price}
                             >
-                                Price: {product.price}
+                                <NumberFormat
+                                    value={product.price}
+                                    displayType={"text"}
+                                    thousandSeparator={true}
+                                    suffix={" VND"}
+                                    renderText={(formattedValue) => (
+                                        <Text style={styles.product_price}>
+                                            {formattedValue}
+                                        </Text>
+                                    )}
+                                />
                             </TextNativeBase>
                         </Box>
                     </View>

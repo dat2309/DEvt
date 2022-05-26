@@ -5,6 +5,8 @@ import {
     Divider,
     HStack,
     Icon,
+    Modal,
+    Spinner,
     Text as TextNativeBase,
     useToast,
     VStack,
@@ -15,13 +17,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import orderApi from "../../../api/orderApi";
 import userUtils from "../../../utils/userUtils";
 import styles from "./CheckoutStyle";
+import NumberFormat from "react-number-format";
 
 const CheckoutScreen = (props) => {
     const [profile, setProfile] = useState();
-    const { cart } = props.route.params;
+    // const { cart } = props.route.params;
     const { quantity } = props.route.params;
     const { price } = props.route.params;
     const [shippingDate, setShippingDate] = useState();
+    const [showModal, setShowModal] = useState(false);
+    const [submit, isSubmit] = useState(false);
+    const [cart, setCart] = useState();
 
     const toast = useToast();
 
@@ -31,6 +37,13 @@ const CheckoutScreen = (props) => {
             status: status,
             placement: "top",
         });
+    };
+
+    const getCartFromParams = () => {
+        const { cart } = props.route.params;
+        if (cart) {
+            setCart(cart);
+        }
     };
 
     const getUserProfile = async () => {
@@ -70,6 +83,7 @@ const CheckoutScreen = (props) => {
     const handlePayment = async () => {
         const user = await userUtils.getUser();
         if (user && profile) {
+            isSubmit(true);
             let orderDetails = [];
             cart.forEach((item) => {
                 const value = {
@@ -89,22 +103,28 @@ const CheckoutScreen = (props) => {
             const res = await orderApi.postOrder(order);
             if (res) {
                 await AsyncStorage.removeItem("cart");
-                showNotify("Your order submited", "success");
-                props.navigation.navigate("CartScreen");
             }
+            isSubmit(false);
+            setShowModal(true);
         } else {
             showNotify("Please complete profile to order products", "warning");
             props.navigation.navigate("Home", { screen: "ProfileScreen" });
         }
     };
 
+    const handleModalClose = () => {
+        setShowModal(false);
+        props.navigation.navigate("CartScreen");
+    };
+
     useEffect(() => {
         const unsubscribe = props.navigation.addListener("focus", () => {
             getUserProfile();
             calculateShippingDate();
+            getCartFromParams();
         });
         return unsubscribe;
-    }, [props.navigation]);
+    }, [props.navigation, cart]);
 
     return (
         <View
@@ -201,7 +221,19 @@ const CheckoutScreen = (props) => {
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                Price: {item.price} VND
+                                                <NumberFormat
+                                                    value={item.price}
+                                                    displayType={"text"}
+                                                    thousandSeparator={true}
+                                                    suffix={" VND"}
+                                                    renderText={(
+                                                        formattedValue
+                                                    ) => (
+                                                        <Text>
+                                                            {formattedValue}
+                                                        </Text>
+                                                    )}
+                                                />
                                             </Text>
                                         </Box>
                                     </VStack>
@@ -268,7 +300,15 @@ const CheckoutScreen = (props) => {
                                     color: "red",
                                 }}
                             >
-                                {price} VND
+                                <NumberFormat
+                                    value={price}
+                                    displayType={"text"}
+                                    thousandSeparator={true}
+                                    suffix={" VND"}
+                                    renderText={(formattedValue) => (
+                                        <Text>{formattedValue}</Text>
+                                    )}
+                                />
                             </Text>
                         </VStack>
                     </HStack>
@@ -305,12 +345,78 @@ const CheckoutScreen = (props) => {
                                 />
                             }
                             onPress={handlePayment}
+                            isDisabled={submit}
                         >
-                            <Text style={styles.button_text}>PAYMENT</Text>
+                            {submit ? (
+                                <Spinner color="white" />
+                            ) : (
+                                <Text style={styles.button_text}>
+                                    SUBMIT ORDER
+                                </Text>
+                            )}
                         </ButtonNativeBase>
                     </VStack>
                 </HStack>
             </View>
+            <Modal isOpen={showModal} onClose={handleModalClose}>
+                <Modal.Content maxWidth={500}>
+                    <Modal.Body>
+                        <View
+                            style={{
+                                flex: 1,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: 20,
+                            }}
+                        >
+                            <Icon
+                                as={Ionicons}
+                                name="checkmark-circle-outline"
+                                color="green.500"
+                                size={60}
+                            />
+                            <VStack
+                                space={3}
+                                style={{
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: 20,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    ORDER SUCCESSFULLY
+                                </Text>
+                                <Text
+                                    style={{
+                                        fontSize: 15,
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    Thanks for choosing DEVT STORE
+                                </Text>
+                                <Text
+                                    style={{
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    Your order has submitted. We will deliver
+                                    them now{" "}
+                                    <Icon
+                                        as={Ionicons}
+                                        name="heart"
+                                        color="red.500"
+                                        size={5}
+                                    />
+                                </Text>
+                            </VStack>
+                        </View>
+                    </Modal.Body>
+                </Modal.Content>
+            </Modal>
         </View>
     );
 };

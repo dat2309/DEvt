@@ -12,6 +12,7 @@ import {
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TextInput, View } from "react-native";
+import NumberFormat from "react-number-format";
 import { COLORS } from "../../../constant/index";
 import CartUtils from "../../../utils/cartUtils";
 import styles from "./CartStyle";
@@ -73,7 +74,6 @@ const CartScreen = (props) => {
         const result = await CartUtils.removeFromCart(id);
         if (result) {
             getCartInStorage();
-            showNotify("Delete success", "success");
         }
     };
 
@@ -217,7 +217,19 @@ const CartScreen = (props) => {
                                                         fontWeight: "600",
                                                     }}
                                                 >
-                                                    Price: {item.price} VND
+                                                    <NumberFormat
+                                                        value={item.price}
+                                                        displayType={"text"}
+                                                        thousandSeparator={true}
+                                                        suffix={" VND"}
+                                                        renderText={(
+                                                            formattedValue
+                                                        ) => (
+                                                            <Text>
+                                                                {formattedValue}
+                                                            </Text>
+                                                        )}
+                                                    />
                                                 </Text>
                                             </Box>
                                         </VStack>
@@ -254,7 +266,15 @@ const CartScreen = (props) => {
                                 </HStack>
                                 <HStack>
                                     <Text style={styles.checkout_price}>
-                                        {price} VND
+                                        <NumberFormat
+                                            value={price}
+                                            displayType={"text"}
+                                            thousandSeparator={true}
+                                            suffix={" VND"}
+                                            renderText={(formattedValue) => (
+                                                <Text>{formattedValue}</Text>
+                                            )}
+                                        />
                                     </Text>
                                 </HStack>
                             </VStack>

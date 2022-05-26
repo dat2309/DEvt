@@ -39,7 +39,7 @@ const ProductListStyle = StyleSheet.create({
         height: 50,
         bottom: 0,
         padding: 5,
-        backgroundColor: "rgba(0,0,0, 0.3)",
+        backgroundColor: "rgba(0,0,0, 0.5)",
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
     },
@@ -50,6 +50,15 @@ const ProductListStyle = StyleSheet.create({
         color: "white",
         fontSize: 14,
         fontWeight: "bold",
+    },
+    text_discount_container: {
+        position: "absolute",
+        width: 45,
+        height: 30,
+        top: 0,
+        padding: 5,
+        backgroundColor: "rgba(245,39,39, 0.6)",
+        borderTopLeftRadius: 10,
     },
 });
 

@@ -61,7 +61,7 @@ const ProductDetailStyle = StyleSheet.create({
     },
 
     btn_add_cart: {
-        backgroundColor: COLORS.lightGray,
+        backgroundColor: COLORS.black,
         color: COLORS.black,
     },
 });

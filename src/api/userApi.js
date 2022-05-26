@@ -33,5 +33,9 @@ const userApi = {
         const url = "/user/password";
         return axiosClient.patch(url, data);
     },
+    putChangePassword: (data) => {
+        const url = "/user/password";
+        return axiosClient.put(url, data);
+    },
 };
 export default userApi;

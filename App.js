@@ -91,7 +91,7 @@ export default function App() {
             }}
           >
             <Drawer.Screen
-              name="Home Page"
+              name="Go Home"
               component={TabNavigator}
             />
             <Drawer.Screen

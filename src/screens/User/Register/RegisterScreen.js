@@ -8,19 +8,22 @@ import {
     HStack,
     Icon,
     Input,
+    Spinner,
     useToast,
     VStack,
 } from "native-base";
 import { COLORS } from "../../../constant/index";
-import styles from "./RegisterStyle";
+import validate from "../../../utils/validate";
 import userApi from "../../../api/userApi";
+import styles from "./RegisterStyle";
 
 const RegisterScreen = (props) => {
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [userName, setUserName] = useState(null);
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
-    const [rePassword, setRePassword] = useState(null);
+    const [userName, setUserName] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [rePassword, setRePassword] = useState();
+    const [submit, isSubmit] = useState(false);
 
     const toast = useToast();
 
@@ -33,35 +36,53 @@ const RegisterScreen = (props) => {
     };
 
     const handleRegister = async () => {
-        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-        if (userName === null || !userName.trim())
-            showNotify("UserName not null!", "error");
-        else if (email === null || !email.trim())
-            showNotify("Email not null!", "error");
-        else if (reg.test(email) === false)
-            showNotify("Email invalidate!", "error");
-        else if (password === null || !password.trim())
-            showNotify("Password not null!", "error");
+        if (password && userName && email && rePassword) {
+            isSubmit(true);
+            const validateUsername = validate.usernameValidate(userName);
+            if (validateUsername !== true) {
+                showNotify(validateUsername, "error");
+                isSubmit(false);
+                return true;
+            }
 
-        else if (rePassword !== password || !rePassword.trim()) {
-            showNotify("Password not match!", "error");
-        } else {
-            const user = {
-                userName: userName,
-                password: password,
-                email: email,
-            };
-            const res = await userApi.postUserRegister(user);
-            if (res) {
-                if (res.code === "CREATED") {
-                    props.navigation.navigate("ActiveScreen", {
-                        userName: userName,
-                    });
-                    showNotify(`Active code sent to ${email}`, "success");
-                } else {
-                    showNotify(res.message, "error");
+            const validatePassword = validate.passwordValidate(password);
+            if (validatePassword !== true) {
+                showNotify(validatePassword, "error");
+                isSubmit(false);
+                return true;
+            }
+
+            const validateEmail = validate.emailValidate(email);
+            if (validateEmail !== true) {
+                showNotify(validateEmail, "error");
+                isSubmit(false);
+                return true;
+            }
+            if (rePassword !== password) {
+                showNotify("Password not match!", "error");
+            } else {
+                const user = {
+                    userName: userName,
+                    password: password,
+                    email: email,
+                };
+                const res = await userApi.postUserRegister(user);
+                if (res) {
+                    if (res.code === "CREATED") {
+                        isSubmit(false);
+
+                        props.navigation.navigate("ActiveScreen", {
+                            userName: userName,
+                        });
+                        showNotify(`Active code sent to ${email}`, "success");
+                    } else {
+                        isSubmit(false);
+                        showNotify(res.message, "error");
+                    }
                 }
             }
+        } else {
+            showNotify("Please fulfill form", "warning");
         }
     };
 
@@ -183,8 +204,15 @@ const RegisterScreen = (props) => {
                                 backgroundColor={COLORS.black}
                                 width={200}
                                 onPress={handleRegister}
+                                isDisabled={submit}
                             >
-                                <Text style={styles.login_title}>Register</Text>
+                                {submit ? (
+                                    <Spinner color="white" />
+                                ) : (
+                                    <Text style={styles.login_title}>
+                                        Register
+                                    </Text>
+                                )}
                             </ButtonNativeBase>
                         </HStack>
                         <HStack mt={2} justifyContent="center">
@@ -206,13 +234,14 @@ const RegisterScreen = (props) => {
                         </HStack>
                     </VStack>
                 </View>
-                <Text></Text>
-                <Text
-                    style={styles.shopping_now_title}
-                    onPress={() => props.navigation.navigate("HomeScreen")}
-                >
-                    SHOPPING NOW
-                </Text>
+                <View style={styles.shopping_now}>
+                    <Text
+                        style={styles.shopping_now_title}
+                        onPress={() => props.navigation.navigate("HomeScreen")}
+                    >
+                        SHOPPING NOW
+                    </Text>
+                </View>
             </View>
 
         </View>

@@ -75,7 +75,7 @@ const CartUtils = {
         }
         const result = {
             totalQuantity,
-            totalPrice: Number(totalPrice).toFixed(2),
+            totalPrice,
         };
         return result;
     },
@@ -95,7 +95,7 @@ const CartUtils = {
                 array[tmp].price = Number(
                     Number(array[tmp].price) +
                         Number(item.price) / Number(item.quantity)
-                ).toFixed(2);
+                );
                 await AsyncStorage.setItem("cart", JSON.stringify(array));
                 return true;
             }
@@ -115,7 +115,7 @@ const CartUtils = {
                 array[tmp].quantity = array[tmp].quantity - 1;
                 array[tmp].price = Number(
                     array[tmp].price - item.price / item.quantity
-                ).toFixed(2);
+                );
                 if (array[tmp].quantity < 1) {
                     const result = await CartUtils.removeFromCart(
                         array[tmp].productId

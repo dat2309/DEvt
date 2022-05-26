@@ -1,12 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     Button as ButtonNativeBase,
     FormControl,
     Heading,
     HStack,
-    Icon,
     Input,
+    Spinner,
     useToast,
     VStack,
 } from "native-base";
@@ -19,6 +17,7 @@ import styles from "./ActiveStyle";
 const ActiveScreen = (props) => {
     const [code, setCode] = useState();
     const { userName } = props.route.params;
+    const [submit, isSubmit] = useState(false);
 
     const toast = useToast();
 
@@ -31,9 +30,8 @@ const ActiveScreen = (props) => {
     };
 
     const handleSubmitCode = async () => {
-        if (code === null || typeof (code) === 'undefined' || code.length != 6)
-            showNotify("Code must have 6 characters", "success");
-        else {
+        if (code) {
+            isSubmit(true);
             const data = {
                 userName: userName,
                 activeKey: code,
@@ -42,12 +40,16 @@ const ActiveScreen = (props) => {
             const res = await userApi.submitCode(data);
             if (res) {
                 if (res.code === "ACCEPTED") {
-                    props.navigation.navigate("LoginScreen");
+                    isSubmit(false);
+                    props.navigation.navigate("HomeScreen");
                     showNotify("Register successfully", "success");
                 } else {
-                    showNotify("Code incorrect", "error");
+                    isSubmit(false);
+                    showNotify(res.message, "error");
                 }
             }
+        } else {
+            showNotify("Please enter your code", "error");
         }
     };
 
@@ -74,7 +76,6 @@ const ActiveScreen = (props) => {
                                     width="xs"
                                     height="12"
                                     placeholder="Enter your code..."
-                                    keyboardType='numeric'
                                     onChangeText={(value) => setCode(value)}
                                 />
                             </HStack>
@@ -83,10 +84,15 @@ const ActiveScreen = (props) => {
                                     backgroundColor={COLORS.black}
                                     width={200}
                                     onPress={handleSubmitCode}
+                                    isDisabled={submit}
                                 >
-                                    <Text style={styles.login_title}>
-                                        Submit
-                                    </Text>
+                                    {submit ? (
+                                        <Spinner color="white" />
+                                    ) : (
+                                        <Text style={styles.login_title}>
+                                            Submit
+                                        </Text>
+                                    )}
                                 </ButtonNativeBase>
                             </HStack>
                             <HStack mt={2} justifyContent="center">
