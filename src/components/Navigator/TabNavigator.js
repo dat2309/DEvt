@@ -31,6 +31,9 @@ const Tab = () => {
                             name="home"
                             size={7}
                             color={focused ? COLORS.black : COLORS.lightGray}
+                            style={{
+                                marginTop: 10,
+                            }}
                         />
                     ),
                 }}
@@ -49,6 +52,9 @@ const Tab = () => {
                             name="shirt"
                             size={7}
                             color={focused ? COLORS.black : COLORS.lightGray}
+                            style={{
+                                marginTop: 10,
+                            }}
                         />
                     ),
                 }}
@@ -68,6 +74,9 @@ const Tab = () => {
                             name="cart"
                             size={7}
                             color={focused ? COLORS.black : COLORS.lightGray}
+                            style={{
+                                marginTop: 10,
+                            }}
                         />
                     ),
                 }}

@@ -54,6 +54,7 @@ export default function App() {
     "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
     "NativeBase:",
     "Warning: Each child in a list should have a unique",
+    "[Unhandled promise rejection: TypeError: undefined is not an object (evaluating 'res.addresses.length')]",
   ]);
   const UserComponentStack = (props) => {
     return <UserStack handleUserLogin={handleUserLogin} {...props} />;

@@ -44,12 +44,14 @@ const LoginScreen = (props) => {
             const validateUsername = validate.usernameValidate(req.userName);
             if (validateUsername !== true) {
                 showNotify(validateUsername, "error");
+                isSubmit(false);
                 return true;
             }
 
             const validatePassword = validate.passwordValidate(req.password);
             if (validatePassword !== true) {
                 showNotify(validatePassword, "error");
+                isSubmit(false);
                 return true;
             }
 

@@ -1,7 +1,8 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import HomeScreen from "../../screens/Home/HomeScreen";
-import ProductDetailScreen from "../../screens/Product/ProductDetail/ProductDetailScreen";
+import DetailScreen from "../../screens/Order/Detail/DetailScreen";
+import HistoryScreen from "../../screens/Order/History/HistoryScreen";
 import ChangePasswordScreen from "../../screens/User/ChangePassword/ChangePasswordScreen";
 import ProfileScreen from "../../screens/User/Profile/ProfileScreen";
 import headerSetting from "./HeaderSetting";
@@ -20,6 +21,8 @@ const HomeStack = (props) => {
                 name="ChangePasswordScreen"
                 component={ChangePasswordScreen}
             />
+            <Stack.Screen name="OrderHistoryScreen" component={HistoryScreen} />
+            <Stack.Screen name="OrderDetailScreen" component={DetailScreen} />
         </Stack.Navigator>
     );
 };

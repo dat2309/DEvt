@@ -66,12 +66,16 @@ const CheckoutScreen = (props) => {
 
     const calculateShippingDate = () => {
         const today = new Date();
-        const date =
-            today.getFullYear() +
-            "-" +
-            (today.getMonth() + 1) +
-            "-" +
-            (today.getDate() + 5);
+        let dateDay;
+        let dateMonth;
+        if (today.getDate() + 5 <= 31) {
+            dateDay = today.getDate() + 5;
+            dateMonth = today.getMonth() + 1;
+        } else {
+            dateDay = today.getDate() + 5 - 31;
+            dateMonth = today.getMonth() + 2;
+        }
+        const date = today.getFullYear() + "-" + dateMonth + "-" + dateDay;
 
         setShippingDate(date);
     };
